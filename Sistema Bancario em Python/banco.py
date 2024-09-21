@@ -6,15 +6,53 @@ import time as time
 saldo = 0
 limite = 3
 movimentacoes = {"Operações": []}
+clientes = []
+contador_contas = 1
+
+def criar_conta(nome_cliente):
+    global contador_contas  # Usamos a variável global para incrementar o número da conta
+    for cliente in clientes:
+        if nome_cliente in cliente:
+            nova_conta = {
+                "Número da Conta": f"{contador_contas:06d}",  # Conta com 6 dígitos
+                "Número da Agência": "0001"
+            }
+            cliente[nome_cliente]["Contas Correntes"].append(nova_conta)
+            contador_contas += 1  # Incrementa o número da conta
+            print(f"Conta {nova_conta['Número da Conta']} criada para {nome_cliente}")
+            return
+    print("Cliente não encontrado")
+
+
+def cadastra_cliente():
+    global clientes
+    nome = input("\nNome: ")
+    endereco = input("\nEndereço: ")
+    cpf = input("\nCPF: ")
+    data_nasc = input("\nData de Nascimento: ")
+    for cliente in clientes:
+        for nome, info in cliente.items():
+            if cpf in info["CPF"]:
+                print("CPF já cadastrado")
+                break
+    else:
+        clientes.append({
+                        nome: { 
+                            "Endereço": [endereco],
+                            "CPF": [cpf],
+                            "Data de Nascimento": [data_nasc],
+                            "Contas Correntes": []
+                        }   
+                        })
+    print("Cliente Cadastrado com sucesso!")
+    return clientes
 
 def checa_limite():
     return limite > 0
 
 
-
 def checa_valor(valor):
     return valor <= saldo
-
 
 
 
@@ -28,7 +66,6 @@ def extrato(valor=0, saque=False):
         return movimentacoes
 
     return movimentacoes
-
 
 
 
@@ -49,7 +86,6 @@ def saque(valor_saque):
 
 
 
-
 def deposito(valor_deposito):
     global saldo
     extrato(valor_deposito, saque = False)
@@ -59,13 +95,12 @@ def deposito(valor_deposito):
 
 
 
-
 def menu():
 
     print("Bem vindo ao Banco\n")
 
     while True:
-        choice = int(input("Seleciona a operação desejada\n 1 - Depósito\n 2 - Saque\n 3 - Checar Extrato\n 4 - Sair\n"))
+        choice = int(input("Seleciona a operação desejada\n 1 - Depósito\n 2 - Saque\n 3 - Checar Extrato\n 4 - Cadastrar Cliente\n 5 - Criar conta(CC)\n 6 - Sair\n"))
         match choice:
             case 1:
                 os.system('cls')
@@ -98,6 +133,15 @@ def menu():
 
             case 4:
                 os.system('cls')
+                cadastra_cliente()
+                os.system('PAUSE')
+            case 5:
+                os.system('cls')
+                nome = input("Nome do cliente:")
+                criar_conta(nome)
+                os.system('PAUSE')
+            case 6:
+                os.system('cls')
                 print("Saindo....")
                 time.sleep(2)
                 return False
@@ -108,11 +152,9 @@ def menu():
 
 
 
-
 def main():
     menu()
     os.system('cls')
-
 
 
 
